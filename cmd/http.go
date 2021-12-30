@@ -8,10 +8,15 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
+	"net/http"
 )
 
 type app struct {
 	server *echo.Echo
+}
+
+func (a app) Server() http.Handler {
+	return a.server
 }
 
 func newApp() app {

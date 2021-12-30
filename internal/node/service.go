@@ -21,6 +21,7 @@ func (s Service) CreateSimpleKv(node segmentation.Node, circleId string) error {
 
 func (s Service) Identify(key string, value interface{}) ([]DB, error) {
 	nodes, err := s.Repository.FindSimpleKV(key, value)
+	fmt.Println(err)
 	if err != nil {
 		return nil, err
 	}
@@ -60,11 +61,7 @@ func (s Service) IdentifyRegular(data map[string]interface{}) ([]DB, error) {
 	}
 	for _, regularNode := range regularNodes {
 		exp := regularNode.Value
-		mapParameters := make(map[string]interface{})
-		for k, v := range data {
-			mapParameters[k] = v
-		}
-		matched, err := eval.EvalExpression(exp, mapParameters)
+		matched, err := eval.Expression(exp, data)
 		if err != nil {
 			return nil, err
 		}

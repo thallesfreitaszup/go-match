@@ -1,6 +1,13 @@
 package segmentation
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
+
+const (
+	SpaceString = " "
+)
 
 type Segmentation struct {
 	Node        Node   `json:"node"`
@@ -45,7 +52,7 @@ type Node struct {
 }
 
 func (n Node) Expression() string {
-	return fmt.Sprintf("%s %s ", n.Content.Condition.Expression(n.Content.Key, n.Content.Value), n.LogicalOperator.Expression())
+	return fmt.Sprintf("%s%s%s%s", n.Content.Condition.Expression(n.Content.Key, n.Content.Value), SpaceString, n.LogicalOperator.Expression(), SpaceString)
 }
 
 type SegmentationType string
@@ -59,7 +66,7 @@ type Condition string
 
 const (
 	Equal       Condition = "EQUAL"
-	NotEquals   Condition = "NOT_EQUALS"
+	NotEqual    Condition = "NOT_EQUALS"
 	Contains    Condition = "CONTAINS"
 	LowerThan   Condition = "LOWER_THAN"
 	GreaterThan Condition = "GREATER_THAN"
@@ -68,11 +75,17 @@ const (
 func (c Condition) Expression(key, value string) string {
 	switch c {
 	case Equal:
+		if _, err := strconv.ParseFloat(value, 64); err == nil {
+			return fmt.Sprintf("toFloat(%s) == toFloat(%s)", key, value)
+		}
 		return fmt.Sprintf("equal(%s,'%s')", key, value)
-	case NotEquals:
-		return `toStr("x") != toStr("y")`
+	case NotEqual:
+		if _, err := strconv.ParseFloat(value, 64); err == nil {
+			return fmt.Sprintf("toFloat(%s) != toFloat(%s)", key, value)
+		}
+		return fmt.Sprintf("!equal(%s,'%s')", key, value)
 	case Contains:
-		return `contains(x,y)`
+		return fmt.Sprintf("contains(%s, %s)", key, value)
 	default:
 		return ""
 	}

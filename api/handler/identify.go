@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"github.com/labstack/echo/v4"
 	"go-match/api/request"
 	"go-match/api/response"
@@ -20,13 +21,14 @@ func (i Identify) Identify(context echo.Context) error {
 		return context.JSON(http.StatusBadRequest, err)
 	}
 	for key, value := range identifyRequest.RequestData {
-		nodes, error := i.Service.Identify(key, value)
-		if error != nil {
+		nodes, err := i.Service.Identify(key, value)
+		if err != nil {
 			return context.JSON(http.StatusInternalServerError, err)
 		}
 		responseArray = append(responseArray, toResponseArray(nodes)...)
 	}
 	regularMatched, err := i.Service.IdentifyRegular(identifyRequest.RequestData)
+	fmt.Println(err)
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err)
 	}
