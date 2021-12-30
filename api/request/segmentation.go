@@ -62,8 +62,8 @@ const (
 type Condition string
 
 const (
-	Equals      Condition = "EQUALS"
-	NotEquals   Condition = "NOT_EQUALS"
+	Equals      Condition = "EQUAL"
+	NotEquals   Condition = "NOT_EQUAL"
 	Contains    Condition = "CONTAINS"
 	LowerThan   Condition = "LOWER_THAN"
 	GreaterThan Condition = "GREATER_THAN"

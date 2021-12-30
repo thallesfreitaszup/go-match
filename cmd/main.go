@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"go-match/cmd/http"
 	"reflect"
 	"strconv"
 	"strings"
@@ -12,8 +13,8 @@ type IdentifyRequest struct {
 }
 
 func main() {
-	app := newApp()
-	app.start()
+	app := http.NewApp()
+	app.Start()
 }
 
 func convertString(data interface{}) string {

@@ -31,7 +31,7 @@ func (s Segmentation) Create(c echo.Context) error {
 			regularValue := ""
 			s.Service.CreateRegularKey(node, segmentationRequest.CircleID, &regularKey)
 			s.Service.CreateRegularValue(node, segmentationRequest.CircleID, &regularValue)
-			err := s.Service.CreateRegular(regularKey, regularValue[:len(regularValue)-3], segmentationRequest.CircleID)
+			err := s.Service.CreateRegular(regularKey, regularValue[:len(regularValue)-4], segmentationRequest.CircleID)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, err)
 			}
