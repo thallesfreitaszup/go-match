@@ -1,18 +1,19 @@
-package node
+package repository
 
 import (
 	"context"
 	"fmt"
-	"go-match/internal/entity/segmentation"
+	"go-match/internal/domain/segmentation"
+	"go-match/internal/segmentation/entity"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type Repository interface {
+type Segmentation interface {
 	CreateSimpleKV(segmentation segmentation.Node, circleId string) error
 	CreateRegular(key, value, circleId string) error
-	FindSimpleKV(key, value interface{}) ([]DB, error)
-	FindRegular() ([]DB, error)
+	FindSimpleKV(key, value interface{}) ([]entity.Segmentation, error)
+	FindRegular() ([]entity.Segmentation, error)
 }
 
 type RepositoryImpl struct {
@@ -20,7 +21,7 @@ type RepositoryImpl struct {
 }
 
 func (r RepositoryImpl) CreateSimpleKV(node segmentation.Node, circleId string) error {
-	collection := r.Client.Database("matcher").Collection("node")
+	collection := r.Client.Database("matcher").Collection("segmentation")
 	_, err := collection.InsertOne(context.TODO(), bson.D{
 		{"key", node.Content.Key},
 		{"value", node.Content.Value},
@@ -34,7 +35,7 @@ func (r RepositoryImpl) CreateSimpleKV(node segmentation.Node, circleId string) 
 }
 
 func (r RepositoryImpl) CreateRegular(key, value, circleId string) error {
-	collection := r.Client.Database("matcher").Collection("node")
+	collection := r.Client.Database("matcher").Collection("segmentation")
 	_, err := collection.InsertOne(context.TODO(), bson.D{
 		{"key", key},
 		{"value", value},
@@ -47,11 +48,11 @@ func (r RepositoryImpl) CreateRegular(key, value, circleId string) error {
 	return nil
 }
 
-func (r RepositoryImpl) FindSimpleKV(key interface{}, value interface{}) ([]DB, error) {
-	var nodeDB DB
-	nodeArray := make([]DB, 0)
+func (r RepositoryImpl) FindSimpleKV(key interface{}, value interface{}) ([]entity.Segmentation, error) {
+	var nodeDB entity.Segmentation
+	nodeArray := make([]entity.Segmentation, 0)
 
-	collection := r.Client.Database("matcher").Collection("node")
+	collection := r.Client.Database("matcher").Collection("segmentation")
 	filter := bson.D{
 		{"key", key},
 		{"value", value},
@@ -74,11 +75,10 @@ func (r RepositoryImpl) FindSimpleKV(key interface{}, value interface{}) ([]DB, 
 	return nodeArray, nil
 }
 
-func (r RepositoryImpl) FindRegular() ([]DB, error) {
-	var nodeDB DB
-	nodeArray := make([]DB, 0)
-
-	collection := r.Client.Database("matcher").Collection("node")
+func (r RepositoryImpl) FindRegular() ([]entity.Segmentation, error) {
+	var nodeDB entity.Segmentation
+	nodeArray := make([]entity.Segmentation, 0)
+	collection := r.Client.Database("matcher").Collection("segmentation")
 	filter := bson.D{
 		{"type", "REGULAR"},
 	}

@@ -5,5 +5,7 @@ import (
 )
 
 var _ = Describe("Node", func() {
-
+	//service := new(service.Segmentation)
+	//service.Repository = new(mocks.Segmentation)
+	//service.Identify("username", "user")
 })

@@ -2,7 +2,7 @@ package request
 
 import (
 	"encoding/json"
-	"go-match/internal/entity/segmentation"
+	"go-match/internal/domain/segmentation"
 )
 
 type SegmentationRequest struct {

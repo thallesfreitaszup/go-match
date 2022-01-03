@@ -9,7 +9,7 @@ import (
 	"github.com/testcontainers/testcontainers-go/wait"
 	"go-match/api/request"
 	"go-match/cmd/http"
-	node2 "go-match/internal/node"
+	"go-match/internal/segmentation/entity"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -84,11 +84,11 @@ func testCreateSegmentationRegular(e *httpexpect.Expect, container testcontainer
 
 	e.POST("/segmentation").WithJSON(segmentationRequest).Expect().Status(201)
 
-	collection := client.Database("matcher").Collection("node")
+	collection := client.Database("matcher").Collection("segmentation")
 	filter := bson.D{
 		{"circleId", segmentationRequest.CircleID},
 	}
-	nodeDB := node2.DB{}
+	nodeDB := entity.Segmentation{}
 	find := collection.FindOne(context.Background(), filter)
 	find.Decode(&nodeDB)
 	assert.Equal(t, nodeDB.CircleID, segmentationRequest.CircleID)

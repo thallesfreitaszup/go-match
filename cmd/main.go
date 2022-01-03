@@ -83,7 +83,7 @@ func convertString(data interface{}) string {
 //	if err != nil {
 //		return nil, err
 //	}
-//	collection := client.Database("matcher").Collection("node")
+//	collection := client.Database("matcher").Collection("segmentation")
 //	filter := bson.D{
 //		{"key", key},
 //		{"value", value},
@@ -106,11 +106,11 @@ func convertString(data interface{}) string {
 //}
 
 //func createSegmentation(nodes []Node, client *mongo.Client, request *SegmentationRequest) error {
-//	collection := client.Database("matcher").Collection("node")
-//	for _, node := range nodes {
+//	collection := client.Database("matcher").Collection("segmentation")
+//	for _, segmentation := range nodes {
 //		_, err := collection.InsertOne(context.TODO(), bson.D{
-//			{"key", node.Content.Key},
-//			{"value", node.Content.Value},
+//			{"key", segmentation.Content.Key},
+//			{"value", segmentation.Content.Value},
 //			{"circleId", request.CircleID},
 //		})
 //		if err != nil {
@@ -119,13 +119,13 @@ func convertString(data interface{}) string {
 //	}
 //	return nil
 //}
-//func decomposeSegmentation(node Node, segmentations *[]Node) {
-//	if node.Type == Clause && node.LogicalOperator == OR {
-//		for _, clause := range node.Clauses {
+//func decomposeSegmentation(segmentation Node, segmentations *[]Node) {
+//	if segmentation.Type == Clause && segmentation.LogicalOperator == OR {
+//		for _, clause := range segmentation.Clauses {
 //			decomposeSegmentation(clause, segmentations)
 //		}
 //	} else {
-//		*segmentations = append(*segmentations, node)
+//		*segmentations = append(*segmentations, segmentation)
 //	}
 //}
 func equal(args ...interface{}) (interface{}, error) {
