@@ -1,14 +1,14 @@
-package node
+package entity
 
 import "go-match/api/response"
 
-type DB struct {
+type Segmentation struct {
 	Key      string
 	Value    string
 	CircleID string
 }
 
-func (d DB) ToResponse() response.IdentifyResponse {
+func (d Segmentation) ToResponse() response.IdentifyResponse {
 	return response.IdentifyResponse{
 		CircleId: d.CircleID,
 	}

@@ -10,7 +10,7 @@ const (
 )
 
 type Segmentation struct {
-	Node        Node   `json:"node"`
+	Node        Node   `json:"segmentation"`
 	WorkspaceID string `json:"workspaceId"`
 	CircleID    string `json:"circleId"`
 	Name        string `json:"name"`
@@ -52,7 +52,20 @@ type Node struct {
 }
 
 func (n Node) Expression() string {
-	return fmt.Sprintf("%s%s%s%s", n.Content.Condition.Expression(n.Content.Key, n.Content.Value), SpaceString, n.LogicalOperator.Expression(), SpaceString)
+	expression := ""
+	if n.Type == Clause {
+		expression += "("
+		for _, clause := range n.Clauses {
+			expression += clause.Expression()
+			expression = expression + n.LogicalOperator.Expression() + SpaceString
+		}
+
+		expression = expression[:len(expression)-4]
+		expression += ")" + SpaceString
+		return expression
+	} else {
+		return fmt.Sprintf("%s%s", n.Content.Condition.Expression(n.Content.Key, n.Content.Value), SpaceString)
+	}
 }
 
 type SegmentationType string

@@ -1,9 +1,11 @@
-package node
+package service
 
 import (
 	"fmt"
-	"go-match/internal/entity/segmentation"
+	"go-match/internal/domain/segmentation"
 	"go-match/internal/eval"
+	"go-match/internal/segmentation/entity"
+	"go-match/internal/segmentation/repository"
 )
 
 const (
@@ -11,15 +13,15 @@ const (
 	EndKeyDelimiter   = "_"
 )
 
-type Service struct {
-	Repository Repository
+type Segmentation struct {
+	Repository repository.Segmentation
 }
 
-func (s Service) CreateSimpleKv(node segmentation.Node, circleId string) error {
+func (s Segmentation) CreateSimpleKv(node segmentation.Node, circleId string) error {
 	return s.Repository.CreateSimpleKV(node, circleId)
 }
 
-func (s Service) Identify(key string, value interface{}) ([]DB, error) {
+func (s Segmentation) Identify(key string, value interface{}) ([]entity.Segmentation, error) {
 	nodes, err := s.Repository.FindSimpleKV(key, value)
 	fmt.Println(err)
 	if err != nil {
@@ -29,7 +31,7 @@ func (s Service) Identify(key string, value interface{}) ([]DB, error) {
 	return nodes, nil
 }
 
-func (s Service) CreateRegularKey(node segmentation.Node, id string, key *string) {
+func (s Segmentation) CreateRegularKey(node segmentation.Node, id string, key *string) {
 	if node.Type == segmentation.Clause {
 		for _, clause := range node.Clauses {
 			s.CreateRegularKey(clause, id, key)
@@ -39,7 +41,7 @@ func (s Service) CreateRegularKey(node segmentation.Node, id string, key *string
 	}
 }
 
-func (s Service) CreateRegularValue(node segmentation.Node, id string, value *string) {
+func (s Segmentation) CreateRegularValue(node segmentation.Node, id string, value *string) {
 	if node.Type == segmentation.Clause {
 		for _, clause := range node.Clauses {
 			s.CreateRegularValue(clause, id, value)
@@ -49,12 +51,12 @@ func (s Service) CreateRegularValue(node segmentation.Node, id string, value *st
 	}
 }
 
-func (s Service) CreateRegular(key string, value string, id string) error {
+func (s Segmentation) CreateRegular(key string, value string, id string) error {
 	return s.Repository.CreateRegular(key, value, id)
 }
 
-func (s Service) IdentifyRegular(data map[string]interface{}) ([]DB, error) {
-	regularMatched := make([]DB, 0)
+func (s Segmentation) IdentifyRegular(data map[string]interface{}) ([]entity.Segmentation, error) {
+	regularMatched := make([]entity.Segmentation, 0)
 	regularNodes, err := s.Repository.FindRegular()
 	if err != nil {
 		return nil, err

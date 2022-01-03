@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"go-match/api/handler"
-	"go-match/internal/node"
+	"go-match/internal/segmentation/repository"
+	"go-match/internal/segmentation/service"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
@@ -45,13 +46,13 @@ func (a app) registerRoutes() {
 		log.Fatal(err)
 	}
 	segmentationHandler := handler.Segmentation{
-		Service: node.Service{Repository: node.RepositoryImpl{
-			client,
+		Service: service.Segmentation{Repository: repository.RepositoryImpl{
+			Client: client,
 		}},
 	}
 
 	identifyHandler := handler.Identify{
-		Service: node.Service{Repository: node.RepositoryImpl{
+		Service: service.Segmentation{Repository: repository.RepositoryImpl{
 			client,
 		}},
 	}

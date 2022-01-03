@@ -3,13 +3,13 @@ package handler
 import (
 	"github.com/labstack/echo/v4"
 	"go-match/api/request"
-	"go-match/internal/entity/segmentation"
-	"go-match/internal/node"
+	"go-match/internal/domain/segmentation"
+	"go-match/internal/segmentation/service"
 	"net/http"
 )
 
 type Segmentation struct {
-	Service node.Service
+	Service service.Segmentation
 }
 
 func (s Segmentation) Create(c echo.Context) error {
@@ -28,10 +28,9 @@ func (s Segmentation) Create(c echo.Context) error {
 			}
 		} else {
 			regularKey := ""
-			regularValue := ""
+			regularValue := node.Expression()
 			s.Service.CreateRegularKey(node, segmentationRequest.CircleID, &regularKey)
-			s.Service.CreateRegularValue(node, segmentationRequest.CircleID, &regularValue)
-			err := s.Service.CreateRegular(regularKey, regularValue[:len(regularValue)-4], segmentationRequest.CircleID)
+			err := s.Service.CreateRegular(regularKey, regularValue, segmentationRequest.CircleID)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, err)
 			}
