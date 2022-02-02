@@ -4,11 +4,13 @@ go 1.17
 
 require (
 	github.com/Knetic/govaluate v3.0.0+incompatible
+	github.com/deckarep/golang-set v1.8.0
 	github.com/gavv/httpexpect/v2 v2.3.1
 	github.com/labstack/echo/v4 v4.6.1
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.17.0
 	github.com/stretchr/testify v1.7.0
+	github.com/testcontainers/testcontainers-go v0.12.0
 	go.mongodb.org/mongo-driver v1.8.1
 )
 
@@ -22,7 +24,6 @@ require (
 	github.com/containerd/cgroups v0.0.0-20210114181951-8a68de567b68 // indirect
 	github.com/containerd/containerd v1.5.0-beta.4 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/deckarep/golang-set v1.8.0 // indirect
 	github.com/docker/distribution v2.7.1+incompatible // indirect
 	github.com/docker/docker v20.10.11+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
@@ -57,7 +58,6 @@ require (
 	github.com/sergi/go-diff v1.0.0 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/stretchr/objx v0.2.0 // indirect
-	github.com/testcontainers/testcontainers-go v0.12.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.27.0 // indirect
 	github.com/valyala/fasttemplate v1.2.1 // indirect

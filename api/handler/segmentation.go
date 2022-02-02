@@ -21,25 +21,29 @@ func (s Segmentation) Create(c echo.Context) error {
 	}
 	decomposeSegmentation(segmentationRequest.Node, &nodes)
 	for _, node := range nodes {
-		if segmentationRequest.Type == request.SimpleKV {
-			err := s.Service.CreateSimpleKv(node, segmentationRequest.CircleID)
-			if err != nil {
-				c.JSON(http.StatusInternalServerError, err)
-			}
-		} else {
-			regularKey := ""
-			regularValue := node.Expression()
-			s.Service.CreateRegularKey(node, segmentationRequest.CircleID, &regularKey)
-			err := s.Service.CreateRegular(regularKey, regularValue, segmentationRequest.CircleID)
-			if err != nil {
-				c.JSON(http.StatusInternalServerError, err)
-			}
-		}
+		err := s.createNode(node, segmentationRequest)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, err)
 		}
 	}
 	return c.NoContent(http.StatusCreated)
+}
+
+func (s Segmentation) createNode(node segmentation.Node, segmentationRequest *request.SegmentationRequest) error {
+	regularKey := ""
+	if segmentationRequest.Type == request.SimpleKV {
+		err := s.Service.CreateSimpleKv(node, segmentationRequest.CircleID)
+		if err != nil {
+			return err
+		}
+	} else {
+		s.Service.CreateRegularKey(node, segmentationRequest.CircleID, &regularKey)
+		err := s.Service.CreateRegular(regularKey, node.Expression(), segmentationRequest.CircleID)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func decomposeSegmentation(nodeRequest request.NodeRequest, segmentations *[]segmentation.Node) {

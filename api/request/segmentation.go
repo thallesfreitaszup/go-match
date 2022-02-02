@@ -68,16 +68,3 @@ const (
 	LowerThan   Condition = "LOWER_THAN"
 	GreaterThan Condition = "GREATER_THAN"
 )
-
-func (c Condition) Expression() string {
-	switch c {
-	case Equals:
-		return `equal(x,y)`
-	case NotEquals:
-		return `toStr("x") != toStr("y")`
-	case Contains:
-		return `contains(x,y)`
-	default:
-		return ""
-	}
-}

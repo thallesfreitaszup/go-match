@@ -21,7 +21,7 @@ type RepositoryImpl struct {
 }
 
 func (r RepositoryImpl) CreateSimpleKV(node segmentation.Node, circleId string) error {
-	collection := r.Client.Database("matcher").Collection("segmentation")
+	collection := r.GetCollection()
 	_, err := collection.InsertOne(context.TODO(), bson.D{
 		{"key", node.Content.Key},
 		{"value", node.Content.Value},
@@ -35,7 +35,7 @@ func (r RepositoryImpl) CreateSimpleKV(node segmentation.Node, circleId string) 
 }
 
 func (r RepositoryImpl) CreateRegular(key, value, circleId string) error {
-	collection := r.Client.Database("matcher").Collection("segmentation")
+	collection := r.GetCollection()
 	_, err := collection.InsertOne(context.TODO(), bson.D{
 		{"key", key},
 		{"value", value},
@@ -49,53 +49,69 @@ func (r RepositoryImpl) CreateRegular(key, value, circleId string) error {
 }
 
 func (r RepositoryImpl) FindSimpleKV(key interface{}, value interface{}) ([]entity.Segmentation, error) {
-	var nodeDB entity.Segmentation
-	nodeArray := make([]entity.Segmentation, 0)
+	segmentationArray := make([]entity.Segmentation, 0)
+	collection := r.GetCollection()
 
-	collection := r.Client.Database("matcher").Collection("segmentation")
 	filter := bson.D{
 		{"key", key},
 		{"value", value},
 	}
-	find, err := collection.Find(context.TODO(), filter)
+
+	data, err := collection.Find(context.TODO(), filter)
+
 	if err == mongo.ErrNoDocuments {
-		// Do something when no record was found
-		fmt.Println("record does not exist")
-		return nodeArray, nil
+		return segmentationArray, nil
 	} else if err != nil {
-		return nil, err
+		return segmentationArray, err
 	}
-	for find.Next(context.TODO()) {
-		err := find.Decode(&nodeDB)
-		if err != nil {
-			return nil, err
-		}
-		nodeArray = append(nodeArray, nodeDB)
+
+	err = r.mapToSegmentation(data, &segmentationArray)
+	if err != nil {
+		return segmentationArray, err
 	}
-	return nodeArray, nil
+	return segmentationArray, nil
 }
 
 func (r RepositoryImpl) FindRegular() ([]entity.Segmentation, error) {
-	var nodeDB entity.Segmentation
-	nodeArray := make([]entity.Segmentation, 0)
-	collection := r.Client.Database("matcher").Collection("segmentation")
+	segmentationArray := make([]entity.Segmentation, 0)
 	filter := bson.D{
 		{"type", "REGULAR"},
 	}
-	find, err := collection.Find(context.TODO(), filter)
+
+	collection := r.GetCollection()
+
+	data, err := collection.Find(context.TODO(), filter)
+
 	if err == mongo.ErrNoDocuments {
 		// Do something when no record was found
 		fmt.Println("record does not exist")
-		return nodeArray, nil
+		return segmentationArray, nil
 	} else if err != nil {
-		return nil, err
+		return segmentationArray, err
 	}
+
+	err = r.mapToSegmentation(data, &segmentationArray)
+	if err != nil {
+		return segmentationArray, err
+	}
+
+	return segmentationArray, nil
+}
+
+func (r RepositoryImpl) GetCollection() *mongo.Collection {
+	return r.Client.Database("matcher").Collection("segmentation")
+}
+
+func (r RepositoryImpl) mapToSegmentation(find *mongo.Cursor, segArray *[]entity.Segmentation) error {
+	var segmentationDB entity.Segmentation
+
 	for find.Next(context.TODO()) {
-		err := find.Decode(&nodeDB)
+		err := find.Decode(&segmentationDB)
 		if err != nil {
-			return nil, err
+			return err
 		}
-		nodeArray = append(nodeArray, nodeDB)
+		*segArray = append(*segArray, segmentationDB)
 	}
-	return nodeArray, nil
+
+	return nil
 }

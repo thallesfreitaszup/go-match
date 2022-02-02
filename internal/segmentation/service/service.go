@@ -6,6 +6,7 @@ import (
 	"go-match/internal/eval"
 	"go-match/internal/segmentation/entity"
 	"go-match/internal/segmentation/repository"
+	"log"
 )
 
 const (
@@ -65,7 +66,7 @@ func (s Segmentation) IdentifyRegular(data map[string]interface{}) ([]entity.Seg
 		exp := regularNode.Value
 		matched, err := eval.Expression(exp, data)
 		if err != nil {
-			return nil, err
+			log.Println("Error evaluating exp: ", err)
 		}
 		if matched {
 			regularMatched = append(regularMatched, regularNode)

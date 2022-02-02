@@ -6,6 +6,7 @@ import (
 	"go-match/api/request"
 	"go-match/internal/segmentation/entity"
 	"go-match/internal/segmentation/service"
+	"log"
 	"net/http"
 )
 
@@ -25,11 +26,11 @@ func (i Identify) Identify(context echo.Context) error {
 		if err != nil {
 			return context.JSON(http.StatusInternalServerError, err)
 		}
-
 		responseArray = append(responseArray, toResponseArray(nodes)...)
 	}
 	regularMatched, err := i.Service.IdentifyRegular(identifyRequest.RequestData)
 	if err != nil {
+		log.Println(err)
 		return context.JSON(http.StatusInternalServerError, err)
 	}
 	responseArray = append(responseArray, toResponseArray(regularMatched)...)
